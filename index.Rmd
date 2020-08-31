@@ -3,6 +3,7 @@ title: "index"
 author: "Ben Peters"
 date: "August 31, 2020"
 output: html_document
+bibliography: index_references.bib
 ---
 
 ```{r setup, include=FALSE}
@@ -13,3 +14,6 @@ This is my Index file
 
 Lab 1 html: 
 file:///C:/Users/peter/Documents/Bioinformatics%20Fall%202020/genomics-bioinformatics-fall-2020/Lab%201/lab1_benjaminpeters.html
+
+Application written in R [@RCoreTeam]
+# REFERENCES

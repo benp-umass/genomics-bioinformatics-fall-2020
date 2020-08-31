@@ -16,6 +16,3 @@ knitr::opts_chunk$set(echo = TRUE)
 
 [Lab 2 (Lab 1 w/ reference)](Lab2.html)
 
-Application written in R [@RCoreTeam] using the shiny framework [@Chang2015]
-
-# References

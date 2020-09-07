@@ -1,0 +1,170 @@
+---
+title: "Lab 3A"
+author: "Ben Peters"
+date: "September 7, 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+```
+
+```{r,eval=FALSE}
+download.file(url="https://ndownloader.figshare.com/files/2292169",
+              destfile = "data_raw/portal_data_joined.csv")
+```
+
+```{r}
+surveys <- read.csv("data/portal_data_joined.csv")
+```
+
+```{r}
+head(surveys)
+```
+
+```{r}
+view(surveys)
+```
+
+```{r}
+str(surveys)
+```
+## Challenge:
+The object "surveys" is a data frame.
+
+There are 34786 rows and 13 columns.
+
+48 species were recorded during these surveys.
+
+```{r}
+1:10
+```
+
+
+## Challenge
+1.
+```{r}
+surveys_200 <- surveys[200, ]
+surveys_200
+```
+
+2.
+```{r}
+n_row <- nrow(surveys)
+surveys_end <- surveys[n_row, ]
+surveys_end
+```
+
+3. 
+```{r}
+surveys_mid <- surveys[n_row / 2, ]
+surveys_mid
+```
+
+4.
+```{r}
+surveys_head <- surveys[-(7:n_row), ]
+surveys_head
+```
+
+```{r}
+head(surveys)
+```
+
+```{r}
+as.factor(surveys$sex)
+```
+
+```{r}
+sex <- factor(surveys$sex)
+head(sex)
+```
+```{r}
+levels(sex)
+```
+```{r}
+levels(sex)[1] <- "Undetermined"
+levels(sex)
+```
+#bar plot of females and males captured during experiment.
+```{r}
+plot(sex)
+```
+
+
+## Challenge
+
+```{r}
+levels(sex)[2:3] <- c("Female", "Male")
+sex_2 <- factor(sex, levels = c("Female", "Male", "Undetermined"))
+plot(sex_2)
+```
+
+## Challenge
+1.
+```{r}
+animal_data <- data.frame(
+  animal = c("dog", "cat", "sea cucumber", "sea urchin"),
+  feel = c("furry", "furry", "squishy", "spiny"),
+  weight = c(45, 8, 1.1, 0.8)
+)
+animal_data
+```
+
+2.
+```{r}
+country_climate <- data.frame(
+  country = c("Canada", "Panama", "South Africa", "Australia"),
+  climate = c("cold", "hot", "temperate", "hot/temperate"),
+  temperature = c(10, 30, 18, "15"),
+  northern_hemisphere = c(TRUE, TRUE, FALSE, "FALSE"),
+  has_kangaroo = c(FALSE, FALSE, FALSE, 1)
+  )
+```
+Guesses:
+
+country: Factor
+
+climate: Factor
+
+temperature: Factor
+
+hemisphere: Factor
+
+has_kangaroo: Numeric
+
+```{r}
+str(country_climate)
+```
+
+
+```{r}
+library(lubridate)
+```
+```{r}
+my_date <- ymd("2020-09-07")
+str(my_date)
+```
+```{r}
+my_date <- ymd(paste("2020", "9", "7", sep = "-"))
+str(my_date)
+```
+
+```{r}
+paste(surveys$year, surveys$month, surveys$day, sep = "-")
+```
+
+```{r}
+surveys$date <- ymd(paste(surveys$year, surveys$month, surveys$day, sep = "-"))
+str(surveys)
+```
+```{r}
+missing_dates <- surveys[is.na(surveys$date), c("year", "month", "day")]
+head(missing_dates)
+```
+
+

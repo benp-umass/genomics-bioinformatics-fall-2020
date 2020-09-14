@@ -1,0 +1,140 @@
+---
+title: "Lab 4 ggplot"
+author: "Ben Peters"
+date: "September 14, 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+library(tidyverse)
+```
+```{r}
+surveys_complete <- read_csv("data/surveys_complete.csv")
+```
+```{r}
+surveys_plot <- ggplot(data = surveys_complete, aes(x = weight, y = hindfoot_length))
+
+surveys_plot + geom_point()
+```
+
+```{r}
+surveys_plot + geom_point(alpha = 0.1, aes(color = species_id))
+```
+
+## Challenge
+This doesn't seem like a very good way to visualize this type of data, though it does still manage to communicate it somewhat usefully.
+
+```{r}
+ggplot(data = surveys_complete, aes(x = species_id, y = weight)) +
+  geom_point(aes(color = plot_type))
+```
+
+
+```{r}
+ggplot(data = surveys_complete, aes(x = species_id, y = weight)) +
+  geom_jitter(alpha = 0.1, color = "purple") + 
+  geom_boxplot(alpha = 0.0)
+
+```
+Putting the boxplot in front of the points can be accomplished by switching their relative positions around the "+" that links the two.
+
+## Challenges
+```{r}
+ggplot(data = surveys_complete, aes(x = species_id, y = weight)) +
+  geom_jitter(alpha = 0.1, color = "purple") + 
+  geom_violin(alpha = 0.0) +
+  scale_y_log10()
+
+```
+
+```{r}
+ggplot(data = surveys_complete, aes(x = species_id, y = hindfoot_length)) +
+  geom_jitter(alpha = 0.1, color = "purple") + 
+  geom_boxplot(alpha = 0.0)
+
+```
+
+```{r}
+yearly_counts <- surveys_complete %>%
+  count(year, genus)
+
+yearly_counts_graph <- 
+  yearly_counts %>% 
+    ggplot(mapping = aes(x = year, y = n, color = genus)) +
+    geom_line()
+
+yearly_counts_graph
+
+```
+
+```{r}
+yearly_counts_graph %>% 
+  + facet_wrap(facets = vars(genus))
+```
+
+```{r}
+yearly_sex_counts <- surveys_complete %>%
+                     count(year, genus, sex)
+
+ggplot(data = yearly_sex_counts, mapping = aes(x = year, y = n, color = sex)) +
+  geom_line() +
+  facet_wrap(facets =  vars(genus))
+```
+
+```{r}
+ggplot(data = yearly_sex_counts, 
+       mapping = aes(x = year, y = n, color = sex)) +
+  geom_line() +
+  facet_grid(rows = vars(sex), cols =  vars(genus))
+```
+```{r}
+ggplot(data = yearly_sex_counts, 
+       mapping = aes(x = year, y = n, color = sex)) +
+  geom_line() +
+  facet_grid(rows = vars(genus))
+```
+
+```{r}
+ ggplot(data = yearly_sex_counts, 
+        mapping = aes(x = year, y = n, color = sex)) +
+     geom_line() +
+     facet_wrap(vars(genus)) +
+     theme_bw()
+```
+
+## Challenge
+```{r}
+avg_yearly_weight <- surveys_complete %>% 
+   group_by(year, species_id) %>%
+   summarize(avg_weight = mean(weight))
+
+ggplot(data = avg_yearly_weight, aes(x = year, y = avg_weight)) +
+  geom_line() +
+  facet_wrap(vars(species_id))
+```
+
+
+```{r}
+ggplot(data = yearly_sex_counts, aes(x = year, y = n, color = sex)) +
+    geom_line() +
+    facet_wrap(vars(genus)) +
+    labs(title = "Observed Genera Through Time",
+         x = "Year of Observation",
+         y = "Number of Individuals") + 
+    theme_bw() + 
+    theme(text = element_text(size = 16))
+```
+
+## Challenge
+```{r}
+yearly_counts_graph %>% 
+  + theme_minimal() %>% 
+  + labs(title = "Observed General Through Time",
+         x = "Observation Year",
+         y = "Count") %>% 
+  + theme(text = element_text(size = 14))
+```
+

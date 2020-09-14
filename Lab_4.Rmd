@@ -1,0 +1,112 @@
+---
+title: "Lab 4"
+author: "Ben Peters"
+date: "September 14, 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+report_03_11_2020 <-   read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/03-11-2020.csv")) %>%
+  rename(Country_Region = "Country/Region", Province_State = "Province/State")
+
+str(report_03_11_2020)
+```
+```{r}
+view(report_03_11_2020)
+```
+
+```{r}
+library(DT)
+datatable(report_03_11_2020)
+```
+
+## Exercises Part 1
+
+1.The report from September 13th has more columns (14 vs 8), including ones not found in the March report such as "FIPS," "Admin2," "Combined_Key," active cases, incidence rate, and case fatality ratio.
+```{r}
+report_03_13_2020 <- read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/03-13-2020.csv")) %>%
+  rename(Country_Region = "Country/Region", Province_State = "Province/State")
+
+report_09_13_2020 <- read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/09-13-2020.csv"))
+
+```
+
+```{r}
+str(report_03_13_2020)
+```
+```{r}
+str(report_09_13_2020)
+```
+```{r}
+view(report_03_13_2020)
+```
+```{r}
+view(report_09_13_2020)
+```
+
+
+2. 
+```{r}
+datatable(
+  report_09_13_2020 %>% 
+    group_by(Country_Region) %>% 
+    summarize(total_confirmed_cases = sum(Confirmed, na.rm = TRUE),
+            total_deaths = sum(Deaths, na.rm = TRUE),
+            total_recoveries = sum(Recovered, na.rm = TRUE))
+)
+```
+
+
+3.
+```{r}
+report_09_13_2020_USA <- filter(report_09_13_2020, Country_Region == "US") %>% 
+  group_by(Province_State) %>% 
+  rename(State_Territory = "Province_State") %>% 
+  summarize(Confirmed_Cases = sum(Confirmed, na.rm = TRUE)) %>% 
+  arrange(desc(Confirmed_Cases))
+
+datatable(report_09_13_2020_USA)
+
+```
+
+
+4.
+```{r}
+report_09_013_2020_deaths <- report_09_13_2020 %>% 
+    group_by(Country_Region) %>% 
+    summarize(Total_Deaths = sum(Deaths, na.rm = TRUE)) %>% 
+    arrange(desc(Total_Deaths)) %>% 
+    rename(Country = "Country_Region") %>% 
+    slice(1:10)
+
+datatable(report_09_013_2020_deaths)
+```
+
+## Exercises Part 2
+
+```{r}
+report_03_12_2020 <- read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/03-12-2020.csv")) %>%
+  rename(Country_Region = "Country/Region", Province_State = "Province/State")
+
+report_09_12_2020 <- read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/09-12-2020.csv"))
+```
+```{r}
+top_10 <- report_09_12_2020 %>%
+  group_by(Country_Region) %>% 
+  summarize(Total_Cases = sum(Confirmed, na.rm = TRUE),
+            Total_Deaths = sum(Deaths, na.rm = TRUE)) %>% 
+  arrange(desc(Total_Cases)) %>% 
+  rename(Country = "Country_Region") %>% 
+  slice(1:10)
+
+```
+
+geom_bar(stat='identity')

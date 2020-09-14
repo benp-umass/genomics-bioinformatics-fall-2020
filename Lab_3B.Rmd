@@ -121,4 +121,81 @@ surveys %>%
 ```
 
 
+```{r}
+surveys_gw <- surveys %>%
+  filter(!is.na(weight)) %>%
+  group_by(plot_id, genus) %>%
+  summarize(mean_weight = mean(weight))
+```
+
+
+```{r}
+surveys_spread <- surveys_gw %>%
+  spread(key = genus, value = mean_weight)
+
+str(surveys_spread)
+```
+
+
+```{r}
+surveys_gather <- surveys_spread %>%
+  gather(key = "genus", value = "mean_weight", -plot_id)
+
+str(surveys_gather)
+```
+
+## Challenge
+1.
+```{r}
+surveys_spread_gen <- surveys %>% 
+  group_by(plot_id, year) %>%
+  summarize(n_genera = n_distinct(genus)) %>%
+  spread(year, n_genera)
+head(surveys_spread_gen)
+```
+
+2. 
+```{r}
+surveys_spread_gen %>% 
+  gather("year", "n_genera", -plot_id)
+```
+
+3.
+```{r}
+surveys_measurement <- surveys %>%
+  gather("measurement", "value", hindfoot_length, weight)
+head(surveys_measurement)
+```
+
+4.
+```{r}
+surveys_measurement %>% 
+  group_by(year, measurement, plot_type) %>% 
+  summarize(mean_value = mean(value, na.rm = TRUE)) %>% 
+  spread(measurement, mean_value)
+```
+
+
+
+```{r}
+surveys_complete <- surveys %>%
+  filter(!is.na(weight),
+         !is.na(hindfoot_length),
+         !is.na(sex))
+```
+```{r}
+species_counts <- surveys_complete %>%
+    count(species_id) %>% 
+    filter(n >= 50)
+
+surveys_complete <- surveys_complete %>%
+  filter(species_id %in% species_counts$species_id)
+```
+
+```{r}
+write_csv(surveys_complete, path = "data/surveys_complete.csv")
+```
+
+
+
 

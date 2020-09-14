@@ -1,0 +1,124 @@
+---
+title: "Lab 3B"
+author: "Ben Peters"
+date: "September 13, 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+surveys <- read_csv("data/portal_data_joined.csv")
+```
+
+```{r}
+str(surveys)
+```
+
+```{r}
+view(surveys)
+```
+```{r}
+select(surveys, plot_id, species_id, weight)
+```
+```{r}
+select(surveys, -record_id, -species_id)
+```
+
+```{r}
+filter(surveys, year == 1995)
+```
+```{r}
+surveys2 <- filter(surveys, weight < 5)
+surveys_sml <- select(surveys2, species_id, sex, weight)
+```
+```{r}
+surveys_sml <- select(filter(surveys, weight < 5), species_id, sex, weight)
+```
+```{r}
+surveys %>%
+  filter(weight < 5) %>%
+  select(species_id, sex, weight)
+```
+
+## Challenge
+```{r}
+surveys %>%
+  filter(year < 1995) %>% 
+  select(year, sex, weight)
+```
+
+```{r}
+surveys %>%
+  mutate(weight_kg = weight / 1000,
+         weight_lb = weight_kg * 2.2)
+```
+
+```{r}
+surveys %>%
+  filter(!is.na(weight)) %>%
+  mutate(weight_kg = weight / 1000) %>%
+  head()
+```
+
+## Challenge
+```{r}
+surveys_metric_hindfoot <- surveys %>% 
+  filter(!is.na(hindfoot_length)) %>%
+  mutate(hindfoot_cm = hindfoot_length / 10) %>%
+  filter(hindfoot_cm < 3) %>%
+  select(species_id, hindfoot_cm)
+head(surveys_metric_hindfoot)
+```
+
+```{r}
+surveys %>%
+  filter(!is.na(weight)) %>%
+  group_by(sex, species_id) %>%
+  summarize(mean_weight = mean(weight)) %>% 
+  print(n = 15)
+```
+
+```{r}
+surveys %>%
+  count(sex, species) %>%
+  arrange(species, desc(n))
+```
+
+## Challenge
+1.
+```{r}
+surveys %>% 
+  count(plot_type)
+```
+
+2.
+```{r}
+surveys %>%
+    filter(!is.na(hindfoot_length)) %>%
+    group_by(species_id) %>%
+    summarize(
+        mean_hf_length = mean(hindfoot_length),
+        min_hf_length = min(hindfoot_length),
+        max_hf_length = max(hindfoot_length),
+        n = n()
+    )
+```
+
+3. 
+```{r}
+surveys %>%
+    filter(!is.na(weight)) %>%
+    group_by(year) %>%
+    filter(weight == max(weight)) %>%
+    select(weight, genus, species_id, year)
+```
+
+
+

@@ -90,6 +90,9 @@ report_09_013_2020_deaths <- report_09_13_2020 %>%
 datatable(report_09_013_2020_deaths)
 ```
 
+[Click Here for GGPlot Challenges](Lab_4_ggplot.html)
+
+
 ## Exercises Part 2
 
 ```{r}
@@ -99,14 +102,105 @@ report_03_12_2020 <- read_csv(url("https://raw.githubusercontent.com/CSSEGISandD
 report_09_12_2020 <- read_csv(url("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/09-12-2020.csv"))
 ```
 ```{r}
-top_10 <- report_09_12_2020 %>%
+report_03_12_2020
+```
+
+```{r}
+top_10_sep <- report_09_12_2020 %>%
   group_by(Country_Region) %>% 
   summarize(Total_Cases = sum(Confirmed, na.rm = TRUE),
             Total_Deaths = sum(Deaths, na.rm = TRUE)) %>% 
   arrange(desc(Total_Cases)) %>% 
-  rename(Country = "Country_Region") %>% 
+  slice(1:10)
+
+top_10_mar <- report_03_12_2020 %>% 
+  group_by(Country_Region) %>%
+  filter(Country_Region %in% c("US", "Russia", "South Africa", "Spain", "Mexico", "Peru", "India", "Colombia", "Brazil", "Argentina")) %>% 
+  summarize(Total_Cases = sum(Confirmed, na.rm = TRUE),
+            Total_Deaths = sum(Deaths, na.rm = TRUE)) %>% 
+  arrange(desc(Total_Cases))
+
+```
+1. 
+```{r}
+top_10_mar <- top_10_mar %>% 
+  mutate(Month = "March")
+top_10_sep %>% 
+  mutate(Month = "September") %>% 
+  full_join(top_10_mar) %>% 
+ggplot(aes(x = Country_Region, y = Total_Cases, color = Month)) + 
+  geom_point(stat = 'identity') +
+  theme_minimal() +
+  labs(title = "Total Cases Amongst Top 10 Countries",
+       x = "Country",
+       y = "Total Cases")
+```
+
+```{r}
+top_10_sep %>% 
+  mutate(Month = "September") %>% 
+  full_join(top_10_mar) %>% 
+ggplot(aes(x = Country_Region, y = Total_Deaths, color = Month)) + 
+  geom_point(stat = 'identity') +
+  theme_minimal() +
+  labs(title = "Total Deaths Amongst Top 10 Countries",
+       x = "Country",
+       y = "Total Deaths")
+```
+
+
+2.
+```{r}
+top_10_sep_state <- report_09_12_2020 %>%
+  group_by(Province_State) %>% 
+  summarize(
+            Total_Cases = sum(Confirmed, na.rm = TRUE),
+            Total_Deaths = sum(Deaths, na.rm = TRUE)
+            ) %>% 
+  arrange(desc(Total_Cases)) %>% 
+  rename(State = "Province_State")
+
+top_10_mar_state <- report_03_12_2020 %>%
+  group_by(Province_State) %>%
+  filter(Province_State %in% c("Maharashtra", "Sao Paulo", "California", "Texas", "Florida", "Andhra Pradesh", "Tamil Nadu", "Karnataka", "New York", "Lima")) %>%
+  summarize(Total_Cases = sum(Confirmed, na.rm = TRUE),
+            Total_Deaths = sum(Deaths, na.rm = TRUE)) %>% 
+  arrange(desc(Total_Cases)) %>% 
+  rename(State = "Province_State")
+```
+
+```{r}
+top_sep_state <- filter(top_10_sep_state, !is.na (State)) %>% 
   slice(1:10)
 
 ```
 
-geom_bar(stat='identity')
+```{r}
+top_sep_state<- top_sep_state %>% 
+  mutate(Month = "September")
+
+top_10_mar_state %>% 
+  mutate(Month = "March") %>% 
+  full_join(top_sep_state) %>% 
+ggplot(aes(x = State, y = Total_Cases, fill = Month)) +
+  geom_bar(stat = 'identity', position = position_dodge()) +
+  theme_classic() +
+  scale_y_log10() +
+  labs(
+    title = "Number of Cases in Top 10 Covid States",
+    x = "State",
+    y = "Number of Cases"
+  )
+  
+```
+```{r}
+top_10_mar_state %>% 
+  mutate(Month = "March") %>% 
+  full_join(top_sep_state) %>% 
+  ggplot(aes(x = State, y = Total_Deaths, fill = Month)) +
+    geom_bar(stat = 'identity', position = position_dodge()) +
+    theme_classic() +
+    labs(title = "Deaths in Top 10 COVID States", x = "State", y = "Deaths")
+    
+```
+

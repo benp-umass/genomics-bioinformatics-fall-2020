@@ -282,6 +282,7 @@ ggplot(aes(x = Date, y = Total_Deaths, color = Country_Region)) +
   geom_point() +
   labs(title = "Total Deaths in Top 10 COVID-19 Countries over Time", x = "Date", y = "Total Deaths")
 ```
+
 8.
 ```{r}
 top_10_deaths_time %>% 

@@ -186,6 +186,8 @@ time_series_long_joined_counts %>%
     geom_point() +
     geom_line() +
     ggtitle("US COVID-19 Cases")
+
+
 ```
 
 ## Exercises
@@ -287,6 +289,7 @@ deaths_per_cases_global %>%
     geom_line() +
     labs(title = "US COVID-19 Deaths/Total Cases per Day", x = "Date", y = "Deaths/Total Cases")
 ```
+
 7.
 ```{r}
 time_series_deaths_long %>% 
@@ -322,27 +325,23 @@ ggplot(aes(x = Date, y = Total_Deaths)) +
 ```{r}
 download.file(url="https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv", 
                destfile = "data/time_series_covid19_confirmed_us.csv")
-
-download.file(url="https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_US.csv",
-               destfile = "data/time_series_covid19_deaths_us.csv")
 ```
 ```{r}
-ts_us_confirmed <- read_csv("data/time_series_covid19_confirmed_us.csv")
+ts_us_confirmed <- read_csv("data/time_series_covid19_confirmed_us.csv") %>% 
+  select(-UID, -iso2, -iso3, -code3, -FIPS, -Admin2, -Combined_Key, -Country_Region, -Lat, -Long_) %>% 
+  pivot_longer(-c("Province_State"),
+                  names_to = "Date", values_to = "Confirmed")
 
-ts_us_deaths <- read_csv("data/time_series_covid19_deaths_us.csv")
-
-
-ts_us_deaths
+head(ts_us_confirmed)
 ```
 
 ```{r}
-
-```
-
-```{r}
-ts_us_joined <- full_join(ts_us_confirmed, ts_us_deaths, by = c("Province_State")) 
-
-ts_us_joined
+ts_us_confirmed %>% 
+  ggplot(aes(x = Date, y = Confirmed)) +
+   geom_point() +
+    geom_line() +
+    ggtitle("COVID-19 Deaths") +
+    facet_wrap(~Province_State, ncol=2, scales="free_y")
 ```
 
 

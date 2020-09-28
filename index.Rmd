@@ -24,4 +24,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 [Lab 4 ggplot challenges](Lab_4_ggplot.html)
 
+[Lab 5](Lab_5.html)
+
 ![](images/Black-chinned Hummingbird 1.jpg)

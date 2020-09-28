@@ -96,6 +96,8 @@ download.file(url="https://raw.githubusercontent.com/CSSEGISandData/COVID-19/mas
 
 time_series_deaths <- read_csv("data/time_series_covid19_deaths_global.csv")%>%
   rename(Province_State = "Province/State", Country_Region = "Country/Region")
+
+time_series_deaths
 ```
 
 ```{r}
@@ -215,12 +217,37 @@ library(DT)
 ```
 
 ```{r}
-Confirmed_3_9_joined <- full_join(Confirmed_3_13, Confirmed_9_13, by = c("Country_Region")) %>% 
-  rename(Confirmed_March = "Confirmed.x", Deaths_March = "Deaths.x", Confirmed_Sep = "Confirmed.y", Deaths_Sep = "Deaths.y")
-datatable(Confirmed_3_9_joined)
+Combined_M_S <- full_join(Confirmed_3_13, Confirmed_9_13, by = c("Country_Region")) %>% 
+  rename(Confirmed_March = "Confirmed.x", Confirmed_Sep = "Confirmed.y", Deaths_March = "Deaths.x", Deaths_Sep = "Deaths.y")
+
+```
+```{r}
+Combined_M_S %>% 
+  select(-Country_Region) %>% 
+  pivot_longer(cols = 1:4, names_to = "Month_Totals", values_to = "Totals") %>% 
+  group_by(Month_Totals) %>% 
+  summarise(
+    Totals = sum(Totals, na.rm = TRUE)
+  ) %>% 
+  ggplot(aes(x = Month_Totals, y = Totals)) +
+  geom_bar(stat="identity")
 ```
 
-3. applies to bar plot from 2.
+3. 
+```{r}
+Combined_M_S %>% 
+  select(-Country_Region) %>% 
+  pivot_longer(cols = 1:4, names_to = "Month_Totals", values_to = "Totals") %>% 
+  group_by(Month_Totals) %>% 
+  summarise(
+    Totals = sum(Totals, na.rm = TRUE)
+  ) %>% 
+  ggplot(aes(x = Month_Totals, y = Totals)) +
+  geom_bar(stat="identity") +
+  labs(title = "Total COVID-19 Cases and Deaths",
+       x = "Month",
+       y = "Total")
+```
 
 
 4.
@@ -292,4 +319,40 @@ ggplot(aes(x = Date, y = Total_Deaths)) +
   labs(title = "Total Deaths in Top 10 COVID-19 Countries over Time", x = "Date", y = "Total Deaths")
 ```
 9.
+```{r}
+download.file(url="https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv", 
+               destfile = "data/time_series_covid19_confirmed_us.csv")
+
+download.file(url="https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_US.csv",
+               destfile = "data/time_series_covid19_deaths_us.csv")
+```
+```{r}
+ts_us_confirmed <- read_csv("data/time_series_covid19_confirmed_us.csv")
+
+ts_us_deaths <- read_csv("data/time_series_covid19_deaths_us.csv")
+
+
+ts_us_deaths
+```
+
+```{r}
+
+```
+
+```{r}
+ts_us_joined <- full_join(ts_us_confirmed, ts_us_deaths, by = c("Province_State")) 
+
+ts_us_joined
+```
+
+
+10.
+```{r}
+top_10_deaths_time %>% 
+ggplot(aes(x = Date, y = Total_Deaths)) +
+  theme_classic() +
+  facet_wrap(facets = vars(Country_Region)) +
+  geom_point() +
+  labs(title = "Total Deaths in Top 10 COVID-19 Countries over Time", x = "Date", y = "Total Deaths")
+```
 

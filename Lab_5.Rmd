@@ -186,8 +186,6 @@ time_series_long_joined_counts %>%
     geom_point() +
     geom_line() +
     ggtitle("US COVID-19 Cases")
-
-
 ```
 
 ## Exercises

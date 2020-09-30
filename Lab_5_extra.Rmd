@@ -147,6 +147,31 @@ ts_long_joined %>%
 
 ## Challenge 2
 ```{r}
+b <- ts_long_joined %>% 
+  group_by(Country_Region, Date) %>% 
+  summarise_at(c("Confirmed", "Deaths"), sum) %>% 
+  filter (Country_Region == "US") %>% 
+    ggplot(aes(x = Date,  y = Deaths)) + 
+    geom_point() +
+    geom_line() +
+    ggtitle("US COVID-19 Deaths")
+
 ggplotly(b)
 ```
+
+## Challenge 3
+```{r}
+d <- ts_long_joined %>% 
+    group_by(Country_Region,Date) %>% 
+    summarise_at(c("Confirmed", "Deaths"), sum) %>% 
+    filter(Country_Region %in% c("US", "Italy", "Brazil", "Russia", "India", "Mexico", "United Kingdom")) %>% 
+    ggplot(aes(x = Date,  y = Deaths, color = Country_Region)) + 
+      geom_point() +
+      geom_line() +
+      ggtitle("Global COVID-19 Deaths among Worst Affected Countries") +
+      geom_point(aes(group = seq_along(Date))) +
+      transition_reveal(Date)
+animate(d, end_pause = 15)
+```
+
 

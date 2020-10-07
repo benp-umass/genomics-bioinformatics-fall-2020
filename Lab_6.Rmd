@@ -66,7 +66,7 @@ ggplot(daily_report, aes(x = Long, y = Lat, size = Confirmed)) +
   
   theme_void() + 
     guides( colour = guide_legend()) +
-    labs(title = "Anisa Dhana's lagout for COVID-19 Confirmed Cases in the US'") +
+    labs(title = "Anisa Dhana's layout for COVID-19 Confirmed Cases in the US'") +
     theme(
       legend.position = "bottom",
       text = element_text(color = "#22211d"),
@@ -310,3 +310,6 @@ ggplotly(
   theme(axis.text = element_blank())
 )
 ```
+
+6. 
+[Dashboard](lab_6_dashboard.html)

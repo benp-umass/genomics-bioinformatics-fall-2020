@@ -311,5 +311,5 @@ ggplotly(
 )
 ```
 
-6. 
-[Dashboard](lab_6_dashboard.html)
+5. 
+[Report](lab_6_dashboard.html)

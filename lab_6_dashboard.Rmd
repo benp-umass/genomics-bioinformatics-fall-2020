@@ -1,5 +1,5 @@
 ---
-title: "Lab 6 Dashboard"
+title: "Lab 6 Report"
 author: "Ben Peters"
 output: html_document
 bibliography: lab_6_ref.bib
@@ -8,7 +8,7 @@ bibliography: lab_6_ref.bib
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-## Ben's COVID-19 Dashboard
+## Ben's COVID-19 Report
 ```{r, echo = FALSE, include=FALSE}
 library(tidyverse)
 library(maps)

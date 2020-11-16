@@ -1,0 +1,368 @@
+---
+title: "Lab 9"
+author: "Ben Peters"
+date: "November 16, 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(stringr)
+library(tidyverse)
+```
+
+```{r}
+x <- c("apple", "banana", "pear")
+str_view(x, "ar")
+```
+
+```{r}
+str_view(x, ".a.")
+```
+```{r}
+dot <- "\\."
+writeLines(dot)
+```
+```{r}
+x <- c("abc", "a.c", "bef")
+str_view(x, "a\\.c")
+```
+```{r}
+x <- "a\\b"
+writeLines(x)
+```
+```{r}
+str_view(x, "\\\\")
+```
+Exercise 14.3.1.1 1:
+"\" is an escape which will escape to the next character in the string, whereas "\\" will be read as a single escape \ and function in the same way: escapign to the next character in the expression. "\\\" will escape a character in the string that's already been escaped, as it will be read as a \ followed by another \.
+
+```{r}
+x <- c("apple", "banana", "pear")
+str_view(x, "^a")
+```
+
+```{r}
+str_view(x, "a$")
+```
+
+```{r}
+x <- c("apple pie", "apple", "apple cake")
+str_view(x, "^apple pie$")
+```
+Exercise 14.3.2.1 1:
+By using the escape symbol \:
+```{r}
+str_view(c("$^$", "aaab$^$ddd", "adlfkjas"), "^\\$\\^\\$$", match = TRUE)
+```
+
+
+```{r}
+x <- c("abc", "a.c", "a*c", "a c")
+str_view(x, "a[.]c")
+```
+```{r}
+str_view(x, ".[*]c")
+```
+```{r}
+str_view(x, "a[ ]")
+```
+```{r}
+x <- c("grey", "gray", "gruy")
+str_view(x, "gr(e|a)y")
+```
+14.3.3.1 Exercise 1:
+```{r}
+str_view(stringr::words, "^[aeiou]")
+```
+
+```{r}
+str_view(stringr::words, "[aeiou]", match = FALSE)
+```
+
+```{r}
+str_subset(stringr::words,"[^e]ed$")
+```
+```{r}
+str_subset(stringr::words, "i(ng|se)$")
+```
+
+```{r}
+x <- "1888 is the longest year in Roman numerals: MDCCCLXXXVIII"
+str_view(x, "XX?")
+```
+
+```{r}
+str_view(x, "XX+")
+```
+
+```{r}
+str_view(x, 'X[VI]+')
+```
+```{r}
+str_view(x, "C{2}")
+```
+```{r}
+str_view(x, "C{2,}")
+```
+```{r}
+str_view(x, "C{2,}")
+```
+```{r}
+str_view(x, 'C{2,3}?')
+```
+```{r}
+str_view(x, 'C[LX]+?')
+```
+Exercise 14.3.4.1 1:
+?: {0,1} - up to 1
++: {1,} - 1 or more
+*: {0,} - 0 or more
+
+```{r}
+str_view(fruit, "(..)\\1", match = TRUE)
+```
+Exercise 14.3.5.1 1:
+(.)\1\1 will match characters appearing consecutively three times.
+
+"(.)(.)\\2\\1" will match a palindromic repeat of two characters like "prrp" or "uttu".
+
+(..)\1 will match any two repeated characters.
+
+"(.).\\1.\\1" will match any sequence of five characters in which the third and fifth are the same as the first.
+
+"(.)(.)(.).*\\3\\2\\1" will match a sequence of three characters followed by any character followed by a reversed repeat of the first three characters.
+
+```{r}
+x <- c("apple", "banana", "pear")
+str_detect(x, "e")
+```
+```{r}
+sum(str_detect(words, "^t"))
+```
+```{r}
+mean(str_detect(words, "[pbtdkg]$"))
+```
+```{r}
+no_vowels_1 <- !str_detect(words, "[aeiou]")
+```
+```{r}
+no_vowels_2 <- str_detect(words, "^[^aeiou]+$")
+identical(no_vowels_1, no_vowels_2)
+```
+```{r}
+words[str_detect(words, "x$")]
+```
+```{r}
+str_subset(words, "x$")
+```
+```{r}
+df <- tibble(
+  word = words, 
+  i = seq_along(word)
+)
+df %>% 
+  filter(str_detect(word, "x$"))
+```
+```{r}
+x <- c("apple", "banana", "pear")
+str_count(x, "a")
+```
+```{r}
+mean(str_count(words, "[aeiou]"))
+```
+```{r}
+df %>% 
+  mutate(
+    vowels = str_count(word, "[aeiou]"),
+    consonants = str_count(word, "[^aeiou]")
+  )
+```
+```{r}
+str_count("abababa", "aba")
+str_view_all("abababa", "aba")
+```
+Exercise 14.4.1.1 1
+Start or end with x:
+```{r}
+words[str_detect(words, "^x|x$")]
+```
+```{r}
+x_start <- str_detect(words, "^x")
+x_end <- str_detect(words, "x$")
+
+words[x_end|x_start]
+```
+
+Start w/ vowel, end w/ consonant
+```{r}
+words[str_detect(words, "^[aeiou].*[bcdfghjklmnpqrstvwxyz]$")]
+```
+```{r}
+vowel_start <- str_detect(words, "^[aeiou]")
+con_end <- str_detect(words, "[bcdfghjklmnpqrstvwxyz]$")
+words[vowel_start & con_end]
+```
+
+Words with at least one of each vowel:
+```{r}
+aeiou <- 
+  cross(rerun(5, c("a", "e", "i", "o", "u")),
+    .filter = function(...) {
+      x <- as.character(unlist(list(...)))
+      length(x) != length(unique(x))
+    }
+  ) %>%
+  map_chr(~str_c(unlist(.x), collapse = ".*")) %>%
+  str_c(collapse = "|")
+str_subset(words, aeiou)
+```
+```{r}
+words[str_detect(words, "a") &
+  str_detect(words, "e") &
+  str_detect(words, "i") &
+  str_detect(words, "o") &
+  str_detect(words, "u")]
+```
+
+```{r}
+length(sentences)
+```
+
+```{r}
+head(sentences)
+```
+```{r}
+colours <- c("red", "orange", "yellow", "green", "blue", "purple")
+colour_match <- str_c(colours, collapse = "|")
+colour_match
+```
+```{r}
+has_colour <- str_subset(sentences, colour_match)
+matches <- str_extract(has_colour, colour_match)
+head(matches)
+```
+```{r}
+has_colour
+```
+```{r}
+more <- sentences[str_count(sentences, colour_match) > 1]
+str_view_all(more, colour_match)
+```
+```{r}
+str_extract(more, colour_match)
+```
+```{r}
+str_extract_all(more, colour_match)
+```
+
+```{r}
+str_extract_all(more, colour_match, simplify = TRUE)
+```
+```{r}
+x <- c("a", "a b", "a b c")
+str_extract_all(x, "[a-z]", simplify = TRUE)
+```
+14.4.2.1 Exercise 1:
+```{r}
+colours <- c("red", "orange", "yellow", "green", "blue", "purple")
+colour_match_corrected <- str_c("\\b(", str_c(colours, collapse = "|"), ")\\b")
+colour_match_corrected
+more <- sentences[str_count(sentences, colour_match) > 1]
+str_view_all(more, colour_match_corrected)
+```
+```{r}
+noun <- "(a|the) ([^ ]+)"
+
+has_noun <- sentences %>%
+  str_subset(noun) %>%
+  head(10)
+has_noun %>% 
+  str_extract(noun)
+```
+```{r}
+has_noun %>% 
+  str_match(noun)
+```
+```{r}
+tibble(sentence = sentences) %>% 
+  tidyr::extract(
+    sentence, c("article", "noun"), "(a|the) ([^ ]+)", 
+    remove = FALSE
+  )
+```
+14.4.3.1 Exercise 1:
+```{r}
+wnum <- "\\b(one|two|three|four|five|six|seven|eight|nine|ten) +(\\w+)"
+sentences[str_detect(sentences, wnum)] %>% 
+  str_extract(wnum)
+```
+
+```{r}
+x <- c("apple", "pear", "banana")
+str_replace(x, "[aeiou]", "*")
+```
+```{r}
+str_replace_all(x, "[aeiou]", "v")
+```
+
+```{r}
+x <- c("1 house", "2 cars", "3 people")
+str_replace_all(x, c("1" = "one", "2" = "two", "3" = "three"))
+```
+```{r}
+sentences %>% 
+  str_replace("([^ ]+) ([^ ]+) ([^ ]+)", "\\1 \\3 \\2") %>% 
+  head(5)
+```
+
+14.4.4.1 Exercise 1:
+```{r}
+slash <- c("/sdf/d/fd/sf/ds", "////d/", "adasdfas/d")
+slash
+```
+```{r}
+str_replace_all(slash, "/", "\\\\")
+```
+
+```{r}
+sentences %>%
+  head(5) %>% 
+  str_split(" ")
+```
+
+```{r}
+"a|b|c|d" %>% 
+  str_split("\\|") %>% 
+  .[[1]]
+```
+```{r}
+sentences %>%
+  head(5) %>% 
+  str_split(" ", simplify = TRUE)
+```
+```{r}
+fields <- c("Name: Hadley", "Country: NZ", "Age: 35")
+fields %>% str_split(": ", n = 2, simplify = TRUE)
+```
+```{r}
+x <- "This is a sentence.  This is another sentence."
+str_view_all(x, boundary("word"))
+```
+
+```{r}
+str_split(x, " ")[[1]]
+```
+```{r}
+str_split(x, boundary("word"))[[1]]
+```
+14.4.5.1 Exercise 1:
+
+```{r}
+fruits <- "Apples, pears, and bananas"
+str_split(fruits, boundary("word"))
+```
+

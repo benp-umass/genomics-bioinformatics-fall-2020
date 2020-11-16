@@ -33,4 +33,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 [Lab 9](lab_9.html)
 
+[Lab 10](Lab_10.html)
+
 ![](images/Black-chinned Hummingbird 1.jpg)
